@@ -1,0 +1,134 @@
+tg-trading-bot/
+├── apps/
+│   ├── bot-service/                # [Node.js/TS] 机器人交互逻辑
+│   │   ├── src/
+│   │   │   ├── api/                # gRPC 客户端定义 (调用 Wallet/Trading)
+│   │   │   │   ├── grpc.client.ts
+│   │   │   │   └── http.client.ts
+│   │   │   ├── commands/           # /start, /buy, /sell 等指令逻辑
+│   │   │   ├── conversations/      # 多步对话流插件 (如：引导导入私钥)
+│   │   │   ├── handlers/           # CallbackQuery 和 Message 处理分发
+│   │   │   ├── keyboards/          # Inline Keyboards 按钮布局模板
+│   │   │   ├── listeners/          # 监听 Redis 事件 (如：成交通知推送)
+│   │   │   ├── menus/              # 动态菜单构建器 (如：持仓列表翻页)
+│   │   │   ├── middlewares/        # 鉴权、频率限制、日志中间件
+│   │   │   ├── services/           # 内部业务逻辑层 (封装 API 调用)
+│   │   │   ├── sessions/           # 用户 Session 状态 (Redis 实现)
+│   │   │   ├── types/              # TS 类型与 Context 定义
+│   │   │   ├── utils/              # 格式化金额、地址脱敏工具
+│   │   │   ├── bot.ts              # Bot 实例配置与中间件挂载
+│   │   │   └── index.ts            # 服务启动入口
+│   │   ├── tests/
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   ├── trading-engine/             # [Go] 核心执行引擎 (高并发)
+│   │   ├── api/
+│   │   │   ├── grpc/               # 交易指令接收接口
+│   │   │   └── http/               # 内部管理接口
+│   │   ├── cmd/
+│   │   │   └── main.go
+│   │   ├── internal/
+│   │   │   ├── execution/          # 链上执行模块 (DEX 交互)
+│   │   │   ├── gas/                # 动态 Gas 预估与优化策略
+│   │   │   ├── matcher/            # 模拟撮合与挂单逻辑
+│   │   │   ├── order/              # 订单状态管理
+│   │   │   ├── pool/               # 连接池管理 (RPC/WS)
+│   │   │   ├── risk/               # 风控校验 (防夹、黑名单、滑点)
+│   │   │   └── repository/         # 订单/成交历史持久化
+│   │   ├── go.mod
+│   │   └── go.sum
+│   │
+│   ├── wallet-service/             # [Go] 钱包与安全签名服务
+│   │   ├── api/
+│   │   │   ├── grpc/               # 获取余额、请求签名接口
+│   │   │   └── http/
+│   │   ├── cmd/
+│   │   │   └── main.go
+│   │   ├── internal/
+│   │   │   ├── account/            # 账户派生、地址推导
+│   │   │   ├── balance/            # 实时余额获取 (多链)
+│   │   │   ├── repository/         # 加密后的私钥存储 (Ciphertext)
+│   │   │   ├── signer/             # 核心签名引擎 (即用即焚逻辑)
+│   │   │   └── vault/              # 加密抽象层
+│   │   │       ├── vault.go        # 接口定义
+│   │   │       ├── mock_vault.go   # [开发用] AES 模拟 KMS 逻辑
+│   │   │       └── kms_vault.go    # [生产用] AWS/GCP KMS 实现
+│   │   ├── go.mod
+│   │   └── go.sum
+│   │
+│   ├── market-service/             # [Go] 行情聚合与监听
+│   │   ├── api/
+│   │   │   └── market_handler.go
+│   │   ├── cmd/
+│   │   │   └── main.go
+│   │   ├── internal/
+│   │   │   ├── aggregator/       # 多 DEX/CEX 价格聚合
+│   │   │   ├── cache/            # 内存级价格快照 (Redis Cache-Aside)
+│   │   │   ├── listener/         # 链上新池子、大额买卖监听
+│   │   │   └── token/            # 代币信息、安全性分析 (Honeypot 检测)
+│   │   ├── go.mod
+│   │   └── go.sum
+│   │
+│   ├── strategy-service/           # [Go] 自动化策略服务
+│   │   ├── cmd/
+│   │   │   └── main.go
+│   │   ├── internal/
+│   │   │   ├── copytrade/          # 跟单逻辑
+│   │   │   ├── limitorder/         # 链上限价单触发器
+│   │   │   ├── sniper/             # 开盘狙击引擎
+│   │   │   └── sltp/               # 止盈止损监控 (Stop Loss / Take Profit)
+│   │   ├── go.mod
+│   │   └── go.sum
+│   │
+│   └── audit-service/              # [新增] 操作审计与合规
+│       ├── cmd/
+│       │   └── main.go
+│       └── internal/
+│           └── audit_logger.go     # 记录私钥解密、资金流向流水
+│
+├── packages/                       # 共享包与协议
+│   ├── proto/                      # 原始定义
+│   │   ├── wallet.proto
+│   │   ├── trading.proto
+│   │   ├── market.proto
+│   │   └── strategy.proto
+│   ├── generated/                  # 自动生成的代码 (不手动修改)
+│   │   ├── ts/                     # gRPC TS 客户端存根
+│   │   └── go/                     # gRPC Go 服务端存根
+│   ├── common-ts/                  # Node.js 通用库 (Logger, i18n, Error)
+│   ├── common-go/                  # Go 通用库 (Middleware, Context)
+│   └── bus-schema/                 # Redis/RabbitMQ 消息格式定义
+│
+├── infra/                          # 基础设施与运维
+│   ├── docker/
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile.bot
+│   │   ├── Dockerfile.go_service
+│   │   └── nginx.conf              # 用于 Webhook 反向代理
+│   ├── k8s/                        # Kubernetes 部署清单
+│   ├── migrations/                 # 数据库迁移脚本 (SQL)
+│   │   ├── 001_users.sql
+│   │   ├── 002_wallets.sql
+│   │   ├── 003_orders.sql
+│   │   └── 004_audit_logs.sql
+│   ├── redis/                      # Redis 配置与持久化策略
+│   └── scripts/                    # 开发与部署自动化脚本
+│
+├── frontend/                       # [Next.js] 管理后台
+│   ├── app/                        # 页面逻辑
+│   ├── components/                 # UI 组件
+│   ├── hooks/                      # 自定义状态 Hooks
+│   ├── services/                   # 后台 API 交互
+│   └── store/                      # 全局状态管理
+│
+├── docs/                           # 项目文档
+│   ├── architecture.md             # 架构演进说明
+│   ├── api-specs.md                # 内部接口文档
+│   └── database-design.md          # E-R 图与索引设计
+│
+├── .env.example                    # 环境变量模板 (包含 MASTER_KEY 占位)
+├── .gitignore
+├── pnpm-workspace.yaml             # Monorepo 配置 (如果是 PNPM)
+├── turbo.json                      # 构建加速配置
+└── README.md
