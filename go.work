@@ -5,3 +5,11 @@ use (
 	./packages/crypto-go
 	./packages/generated
 )
+
+// 全局强制替换：所有模块都使用新版子模块，禁止下载旧版整体模块
+replace (
+	// 核心：拦截所有对旧版 genproto 的引用，指向新版子模块
+	google.golang.org/genproto => google.golang.org/genproto/googleapis/rpc v0.0.0-20251222181119-0a764e51fe1b
+	// 兜底：确保子模块路径也指向同一版本
+	google.golang.org/genproto/googleapis/rpc => google.golang.org/genproto/googleapis/rpc v0.0.0-20251222181119-0a764e51fe1b
+)
