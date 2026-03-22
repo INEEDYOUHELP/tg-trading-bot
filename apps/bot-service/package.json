@@ -9,7 +9,7 @@
         "build": "tsc",
         "start": "node dist/index.js",
         "dev": "tsx watch src/index.ts",
-        "clean":"rimraf dist"
+        "clean": "rimraf dist"
     },
     "keywords": [],
     "author": "",
@@ -23,8 +23,11 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
+        "@grpc/grpc-js": "^1.14.3",
+        "@grpc/proto-loader": "^0.8.0",
         "dotenv": "^17.3.1",
         "grammy": "^1.41.1",
-        "https-proxy-agent": "^8.0.0"
+        "https-proxy-agent": "^8.0.0",
+        "ts-proto": "^2.11.5"
     }
 }
