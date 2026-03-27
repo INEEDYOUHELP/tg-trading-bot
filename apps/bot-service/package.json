@@ -28,6 +28,7 @@
         "dotenv": "^17.3.1",
         "grammy": "^1.41.1",
         "https-proxy-agent": "^8.0.0",
-        "ts-proto": "^2.11.5"
+        "ts-proto": "^2.11.5",
+        "@tg-trading-bot/wallet-generated-ts": "workspace:*"
     }
 }

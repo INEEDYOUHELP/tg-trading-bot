@@ -3,11 +3,10 @@ package account
 import (
     "context"
     //"fmt"
-    "os"
-   
+    "os"   
     "github.com/INEEDYOUHELP/tg-trading-bot/packages/crypto-go"      // 你的工厂模式库
     "github.com/INEEDYOUHELP/tg-trading-bot/packages/crypto-go/aes"  // 你的加密库
-    "github.com/INEEDYOUHELP/tg-trading-bot/apps/wallet-service/internal/repository"     // 你的 DB 库
+    "github.com/INEEDYOUHELP/tg-trading-bot/apps/wallet-service/internal/repository" // 你的 DB 库
     "github.com/INEEDYOUHELP/tg-trading-bot/packages/generated/go/wallet" // Proto 生成的代码
 )
 
@@ -19,9 +18,9 @@ type WalletServiceHandler struct {
 func (s *WalletServiceHandler) CreateAccount(ctx context.Context, req *wallet.CreateAccountRequest) (*wallet.CreateAccountResponse, error) {
     // 1. 转换请求中的链类型 (Enum -> String)
     var chainStr string
-    if req.Chain == wallet.ChainType_CHAIN_EVM {
+    if req.Chain == wallet.ChainType_EVM {
         chainStr = "EVM"
-    } else if req.Chain == wallet.ChainType_CHAIN_SOLANA {
+    } else if req.Chain == wallet.ChainType_SOLANA {
         chainStr = "SOLANA"
     } else {
         return &wallet.CreateAccountResponse{Success: false, Message: "不支持的链类型"}, nil
@@ -59,14 +58,31 @@ func (s *WalletServiceHandler) CreateAccount(ctx context.Context, req *wallet.Cr
 }
 
 // GetAddress
+// GetAddress
 func (s *WalletServiceHandler) GetAddress(ctx context.Context, req *wallet.GetAddressRequest) (*wallet.GetAddressResponse, error) {
-    // 1. 调用 repo 查询数据库
-    // 假设你的 repo 有 FindByTGID 方法
-    w, err := s.Repo.FindByTGID(req.TgUserId, "EVM") // 这里 chain 逻辑可以根据需求调整
-    if err != nil {
-        return &wallet.GetAddressResponse{HasWallet: false}, nil
+    // 1) 枚举 -> 字符串（与 GetBalance 保持一致）
+    var chainStr string
+    if req.Chain == wallet.ChainType_EVM {
+        chainStr = "EVM"
+    } else if req.Chain == wallet.ChainType_SOLANA {
+        chainStr = "SOLANA"
+    } else {
+        return &wallet.GetAddressResponse{
+            Address:   "",
+            HasWallet: false,
+        }, nil
     }
 
+    // 2) 按 tg_user_id + chain 查数据库
+    w, err := s.Repo.FindByTGID(req.TgUserId, chainStr)
+    if err != nil || w == nil {
+        return &wallet.GetAddressResponse{
+            Address:   "",
+            HasWallet: false,
+        }, nil
+    }
+
+    // 3) 返回地址
     return &wallet.GetAddressResponse{
         Address:   w.Address,
         HasWallet: true,

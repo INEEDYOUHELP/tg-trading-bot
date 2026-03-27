@@ -5,11 +5,6 @@ package wallet;
 // 建议设置 go_package，方便 Go 项目导入
 option go_package = "github.com/INEEDYOUHELP/tg-trading-bot/packages/generated/go/wallet";
 
-enum ChainType {
-  CHAIN_UNSPECIFIED = 0;
-  CHAIN_EVM = 1;
-  CHAIN_SOLANA = 2;
-}
 
 // 定义钱包服务
 service WalletService {
@@ -18,9 +13,18 @@ service WalletService {
 
   // 2. 获取已有钱包地址（用于身份绑定查询）
   rpc GetAddress (GetAddressRequest) returns (GetAddressResponse);
+
+  // 3.获取钱包余额
+  rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse);
 }
 
 // --- 请求与响应的消息结构 ---
+
+enum ChainType {
+  UNSPECIFIED = 0;
+  EVM = 1;
+  SOLANA = 2;
+}
 
 message CreateAccountRequest {
   int64 tg_user_id = 1;     // Telegram 用户唯一 ID
@@ -35,9 +39,20 @@ message CreateAccountResponse {
 
 message GetAddressRequest {
   int64 tg_user_id = 1;
+  ChainType chain = 2;
 }
 
 message GetAddressResponse {
   string address = 1;       // 如果没有绑定，返回空字符串
   bool has_wallet = 2;      // 标识是否已存在钱包
+}
+
+message GetBalanceRequest {
+  int64 tg_user_id = 1;
+  ChainType chain = 2;
+}
+message GetBalanceResponse {
+  string balance = 1;   // 余额建议用 string（避免大整数/小数精度问题）
+  bool has_wallet = 2;
+  string message = 3;  // 可选：错误信息
 }

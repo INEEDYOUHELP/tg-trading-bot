@@ -1,0 +1,7 @@
+{
+    "name": "tg-trading-bot-root",
+    "private": true,
+    "scripts": {
+      "build": "pnpm -r build"
+    }
+  }

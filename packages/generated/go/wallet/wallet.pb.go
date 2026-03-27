@@ -24,22 +24,22 @@ const (
 type ChainType int32
 
 const (
-	ChainType_CHAIN_UNSPECIFIED ChainType = 0
-	ChainType_CHAIN_EVM         ChainType = 1
-	ChainType_CHAIN_SOLANA      ChainType = 2
+	ChainType_UNSPECIFIED ChainType = 0
+	ChainType_EVM         ChainType = 1
+	ChainType_SOLANA      ChainType = 2
 )
 
 // Enum value maps for ChainType.
 var (
 	ChainType_name = map[int32]string{
-		0: "CHAIN_UNSPECIFIED",
-		1: "CHAIN_EVM",
-		2: "CHAIN_SOLANA",
+		0: "UNSPECIFIED",
+		1: "EVM",
+		2: "SOLANA",
 	}
 	ChainType_value = map[string]int32{
-		"CHAIN_UNSPECIFIED": 0,
-		"CHAIN_EVM":         1,
-		"CHAIN_SOLANA":      2,
+		"UNSPECIFIED": 0,
+		"EVM":         1,
+		"SOLANA":      2,
 	}
 )
 
@@ -119,7 +119,7 @@ func (x *CreateAccountRequest) GetChain() ChainType {
 	if x != nil {
 		return x.Chain
 	}
-	return ChainType_CHAIN_UNSPECIFIED
+	return ChainType_UNSPECIFIED
 }
 
 type CreateAccountResponse struct {
@@ -185,6 +185,7 @@ func (x *CreateAccountResponse) GetMessage() string {
 type GetAddressRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TgUserId      int64                  `protobuf:"varint,1,opt,name=tg_user_id,json=tgUserId,proto3" json:"tg_user_id,omitempty"`
+	Chain         ChainType              `protobuf:"varint,2,opt,name=chain,proto3,enum=wallet.ChainType" json:"chain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -224,6 +225,13 @@ func (x *GetAddressRequest) GetTgUserId() int64 {
 		return x.TgUserId
 	}
 	return 0
+}
+
+func (x *GetAddressRequest) GetChain() ChainType {
+	if x != nil {
+		return x.Chain
+	}
+	return ChainType_UNSPECIFIED
 }
 
 type GetAddressResponse struct {
@@ -278,6 +286,118 @@ func (x *GetAddressResponse) GetHasWallet() bool {
 	return false
 }
 
+type GetBalanceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TgUserId      int64                  `protobuf:"varint,1,opt,name=tg_user_id,json=tgUserId,proto3" json:"tg_user_id,omitempty"`
+	Chain         ChainType              `protobuf:"varint,2,opt,name=chain,proto3,enum=wallet.ChainType" json:"chain,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBalanceRequest) Reset() {
+	*x = GetBalanceRequest{}
+	mi := &file_wallet_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBalanceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBalanceRequest) ProtoMessage() {}
+
+func (x *GetBalanceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_wallet_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBalanceRequest.ProtoReflect.Descriptor instead.
+func (*GetBalanceRequest) Descriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetBalanceRequest) GetTgUserId() int64 {
+	if x != nil {
+		return x.TgUserId
+	}
+	return 0
+}
+
+func (x *GetBalanceRequest) GetChain() ChainType {
+	if x != nil {
+		return x.Chain
+	}
+	return ChainType_UNSPECIFIED
+}
+
+type GetBalanceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Balance       string                 `protobuf:"bytes,1,opt,name=balance,proto3" json:"balance,omitempty"` // 余额建议用 string（避免大整数/小数精度问题）
+	HasWallet     bool                   `protobuf:"varint,2,opt,name=has_wallet,json=hasWallet,proto3" json:"has_wallet,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"` // 可选：错误信息
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBalanceResponse) Reset() {
+	*x = GetBalanceResponse{}
+	mi := &file_wallet_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBalanceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBalanceResponse) ProtoMessage() {}
+
+func (x *GetBalanceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wallet_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBalanceResponse.ProtoReflect.Descriptor instead.
+func (*GetBalanceResponse) Descriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetBalanceResponse) GetBalance() string {
+	if x != nil {
+		return x.Balance
+	}
+	return ""
+}
+
+func (x *GetBalanceResponse) GetHasWallet() bool {
+	if x != nil {
+		return x.HasWallet
+	}
+	return false
+}
+
+func (x *GetBalanceResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_wallet_proto protoreflect.FileDescriptor
 
 const file_wallet_proto_rawDesc = "" +
@@ -290,22 +410,35 @@ const file_wallet_proto_rawDesc = "" +
 	"\x15CreateAccountResponse\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"1\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"Z\n" +
 	"\x11GetAddressRequest\x12\x1c\n" +
 	"\n" +
-	"tg_user_id\x18\x01 \x01(\x03R\btgUserId\"M\n" +
+	"tg_user_id\x18\x01 \x01(\x03R\btgUserId\x12'\n" +
+	"\x05chain\x18\x02 \x01(\x0e2\x11.wallet.ChainTypeR\x05chain\"M\n" +
 	"\x12GetAddressResponse\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x1d\n" +
 	"\n" +
-	"has_wallet\x18\x02 \x01(\bR\thasWallet*C\n" +
-	"\tChainType\x12\x15\n" +
-	"\x11CHAIN_UNSPECIFIED\x10\x00\x12\r\n" +
-	"\tCHAIN_EVM\x10\x01\x12\x10\n" +
-	"\fCHAIN_SOLANA\x10\x022\xa2\x01\n" +
+	"has_wallet\x18\x02 \x01(\bR\thasWallet\"Z\n" +
+	"\x11GetBalanceRequest\x12\x1c\n" +
+	"\n" +
+	"tg_user_id\x18\x01 \x01(\x03R\btgUserId\x12'\n" +
+	"\x05chain\x18\x02 \x01(\x0e2\x11.wallet.ChainTypeR\x05chain\"g\n" +
+	"\x12GetBalanceResponse\x12\x18\n" +
+	"\abalance\x18\x01 \x01(\tR\abalance\x12\x1d\n" +
+	"\n" +
+	"has_wallet\x18\x02 \x01(\bR\thasWallet\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage*1\n" +
+	"\tChainType\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\a\n" +
+	"\x03EVM\x10\x01\x12\n" +
+	"\n" +
+	"\x06SOLANA\x10\x022\xe7\x01\n" +
 	"\rWalletService\x12L\n" +
 	"\rCreateAccount\x12\x1c.wallet.CreateAccountRequest\x1a\x1d.wallet.CreateAccountResponse\x12C\n" +
 	"\n" +
-	"GetAddress\x12\x19.wallet.GetAddressRequest\x1a\x1a.wallet.GetAddressResponseBEZCgithub.com/INEEDYOUHELP/tg-trading-bot/packages/generated/go/walletb\x06proto3"
+	"GetAddress\x12\x19.wallet.GetAddressRequest\x1a\x1a.wallet.GetAddressResponse\x12C\n" +
+	"\n" +
+	"GetBalance\x12\x19.wallet.GetBalanceRequest\x1a\x1a.wallet.GetBalanceResponseBEZCgithub.com/INEEDYOUHELP/tg-trading-bot/packages/generated/go/walletb\x06proto3"
 
 var (
 	file_wallet_proto_rawDescOnce sync.Once
@@ -320,25 +453,31 @@ func file_wallet_proto_rawDescGZIP() []byte {
 }
 
 var file_wallet_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_wallet_proto_goTypes = []any{
 	(ChainType)(0),                // 0: wallet.ChainType
 	(*CreateAccountRequest)(nil),  // 1: wallet.CreateAccountRequest
 	(*CreateAccountResponse)(nil), // 2: wallet.CreateAccountResponse
 	(*GetAddressRequest)(nil),     // 3: wallet.GetAddressRequest
 	(*GetAddressResponse)(nil),    // 4: wallet.GetAddressResponse
+	(*GetBalanceRequest)(nil),     // 5: wallet.GetBalanceRequest
+	(*GetBalanceResponse)(nil),    // 6: wallet.GetBalanceResponse
 }
 var file_wallet_proto_depIdxs = []int32{
 	0, // 0: wallet.CreateAccountRequest.chain:type_name -> wallet.ChainType
-	1, // 1: wallet.WalletService.CreateAccount:input_type -> wallet.CreateAccountRequest
-	3, // 2: wallet.WalletService.GetAddress:input_type -> wallet.GetAddressRequest
-	2, // 3: wallet.WalletService.CreateAccount:output_type -> wallet.CreateAccountResponse
-	4, // 4: wallet.WalletService.GetAddress:output_type -> wallet.GetAddressResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 1: wallet.GetAddressRequest.chain:type_name -> wallet.ChainType
+	0, // 2: wallet.GetBalanceRequest.chain:type_name -> wallet.ChainType
+	1, // 3: wallet.WalletService.CreateAccount:input_type -> wallet.CreateAccountRequest
+	3, // 4: wallet.WalletService.GetAddress:input_type -> wallet.GetAddressRequest
+	5, // 5: wallet.WalletService.GetBalance:input_type -> wallet.GetBalanceRequest
+	2, // 6: wallet.WalletService.CreateAccount:output_type -> wallet.CreateAccountResponse
+	4, // 7: wallet.WalletService.GetAddress:output_type -> wallet.GetAddressResponse
+	6, // 8: wallet.WalletService.GetBalance:output_type -> wallet.GetBalanceResponse
+	6, // [6:9] is the sub-list for method output_type
+	3, // [3:6] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_wallet_proto_init() }
@@ -352,7 +491,7 @@ func file_wallet_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wallet_proto_rawDesc), len(file_wallet_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
